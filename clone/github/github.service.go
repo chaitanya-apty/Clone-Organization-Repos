@@ -56,6 +56,11 @@ func (svc *Service) ValidateDestination() bool {
 	return true
 }
 
+func logOutput(name string) {
+	fmt.Println("________________________________________________________")
+	fmt.Println("\nCloning in Progress <===>", name, ",please wait..")
+}
+
 //CloneReposToDestination - Download Repos to Destination
 func (svc *Service) CloneReposToDestination() {
 	token := env.GetAccessToken()
@@ -74,20 +79,18 @@ func (svc *Service) CloneReposToDestination() {
 	for _, r := range repos {
 		if hp.IgnoreRepo(r.Name, ignoreList) || hp.SkipForkedRepo(r.Fork, cloneFork) {
 			skipped++
-			fmt.Println("*****Ignored Repo:", r.Name, "*******")
+			fmt.Println("\n*****Ignored Repo:", r.Name, "*******")
 			continue
 		}
 		prepCloneCommand := hp.GetCloneCommand(r.Name, token, userName, r.Owner.Name)
 		cmd := exec.Command("git", "clone", prepCloneCommand)
 		cmd.Dir = svc.Destination
 		if err := cmd.Start(); err != nil {
-			log.Printf("Failed to Git Command: %v", err)
+			log.Printf("Failed to execute Git Command: %v", err)
 			return
 		}
 
-		// Notify Output Branch Details:
-		fmt.Println("________________________________________________________")
-		fmt.Println("\nCloning in Progress <===>", r.Name, ",please wait..")
+		logOutput(r.Name)
 
 		// Wait Before Moving to Next clone:
 		if err := cmd.Wait(); err != nil {
