@@ -96,5 +96,5 @@ func (svc *Service) CloneReposToDestination() {
 
 		log.Println("Completed For: [", r.ID, "|", r.Name, "|", r.DefaultBranch, "]")
 	}
-	log.Println("\nCloning Completed Successfully, Check your Destination Directory")
+	log.Println("<< Cloning Completed Successfully, Check your Destination Directory >>")
 }
